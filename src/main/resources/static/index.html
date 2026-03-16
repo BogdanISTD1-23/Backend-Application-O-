@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Абоненты О! — Панель управления</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+    <header class="app-header">
+        <div class="logo">
+            <span class="logo-mark">O!</span>
+            <span class="logo-text">Абоненты</span>
+        </div>
+        <div class="header-right">
+            <span class="env-badge">Backend: <code>/api/v1/subscribers</code></span>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <section class="card card-form">
+            <h2>Создать нового абонента</h2>
+            <form id="subscriber-form" autocomplete="off">
+                <div class="form-row">
+                    <label for="msisdn">Номер (MSISDN)</label>
+                    <input id="msisdn" name="msisdn" type="text" placeholder="0700xxxxxx" required>
+                    <small class="hint">Номер должен начинаться с 0700</small>
+                </div>
+                <div class="form-row">
+                    <label for="fullName">ФИО</label>
+                    <input id="fullName" name="fullName" type="text" placeholder="Иванов Иван" required>
+                </div>
+                <div class="form-row">
+                    <label for="status">Статус</label>
+                    <select id="status" name="status" required>
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="BLOCKED">BLOCKED</option>
+                        <option value="SUSPENDED">SUSPENDED</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="balance">Баланс (сом)</label>
+                    <input id="balance" name="balance" type="number" step="0.01" min="0" value="0.00" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Создать абонента</button>
+                    <button type="button" class="secondary" id="reset-form">Очистить</button>
+                </div>
+            </form>
+            <div id="form-errors" class="alert alert-error hidden"></div>
+            <div id="form-success" class="alert alert-success hidden"></div>
+        </section>
+
+        <section class="card card-table">
+            <div class="card-header">
+                <h2>Список абонентов</h2>
+                <div class="card-actions">
+                    <button id="refresh-list" class="ghost">Обновить</button>
+                </div>
+            </div>
+            <div id="table-wrapper" class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>MSISDN</th>
+                        <th>ФИО</th>
+                        <th>Статус</th>
+                        <th>Баланс</th>
+                        <th>Создан</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody id="subscriber-table-body">
+                    <tr>
+                        <td colspan="7" class="placeholder">Загрузка списка абонентов...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="table-message" class="table-message"></div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <span>О! Mobile Operator — демо сервис абонентов</span>
+        <span>Frontend: <code>resources/static/index.html</code></span>
+    </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
+
