@@ -1,9 +1,7 @@
 package com.operator.subscriber.payload.request;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
-@Data
 public class RegisterRequest {
 
     @NotBlank(message = "Имя пользователя обязательно")
@@ -17,4 +15,28 @@ public class RegisterRequest {
     @NotBlank(message = "Пароль обязателен")
     @Size(min = 6, max = 100, message = "Пароль от 6 до 100 символов")
     private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

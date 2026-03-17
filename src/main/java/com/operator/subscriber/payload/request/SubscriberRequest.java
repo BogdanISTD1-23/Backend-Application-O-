@@ -2,11 +2,9 @@ package com.operator.subscriber.payload.request;
 
 import com.operator.subscriber.validation.ValidPhoneNumber;
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data
 public class SubscriberRequest {
 
     @NotBlank(message = "Имя обязательно")
@@ -31,4 +29,60 @@ public class SubscriberRequest {
 
     @Pattern(regexp = "ACTIVE|SUSPENDED|BLOCKED|TERMINATED", message = "Статус должен быть: ACTIVE, SUSPENDED, BLOCKED или TERMINATED")
     private String status = "ACTIVE";
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMsisdn() {
+        return msisdn;
+    }
+
+    public void setMsisdn(String msisdn) {
+        this.msisdn = msisdn;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
+    public Long getTariffId() {
+        return tariffId;
+    }
+
+    public void setTariffId(Long tariffId) {
+        this.tariffId = tariffId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

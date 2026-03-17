@@ -1,11 +1,9 @@
 package com.operator.subscriber.payload.request;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data
 public class TransactionRequest {
 
     @NotNull(message = "ID абонента обязателен")
@@ -22,4 +20,36 @@ public class TransactionRequest {
 
     @Size(max = 255, message = "Описание не более 255 символов")
     private String description;
+
+    public Long getSubscriberId() {
+        return subscriberId;
+    }
+
+    public void setSubscriberId(Long subscriberId) {
+        this.subscriberId = subscriberId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

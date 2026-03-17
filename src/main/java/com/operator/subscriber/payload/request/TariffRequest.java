@@ -1,11 +1,9 @@
 package com.operator.subscriber.payload.request;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data
 public class TariffRequest {
 
     @NotBlank(message = "Название тарифа обязательно")
@@ -22,4 +20,44 @@ public class TariffRequest {
     private Integer speedMbps;
 
     private boolean active = true;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getSpeedMbps() {
+        return speedMbps;
+    }
+
+    public void setSpeedMbps(Integer speedMbps) {
+        this.speedMbps = speedMbps;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

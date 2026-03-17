@@ -1,7 +1,6 @@
 package com.operator.subscriber.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -9,11 +8,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "app_users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AppUser {
 
     @Id
@@ -41,11 +35,143 @@ public class AppUser {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+    }
+
+    public AppUser() {
+    }
+
+    public AppUser(
+            Long id,
+            String username,
+            String password,
+            String email,
+            boolean enabled,
+            LocalDateTime createdAt,
+            Set<Role> roles
+    ) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.enabled = enabled;
+        this.createdAt = createdAt;
+        this.roles = roles == null ? new HashSet<>() : roles;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles == null ? new HashSet<>() : roles;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private Long id;
+        private String username;
+        private String password;
+        private String email;
+        private boolean enabled = true;
+        private LocalDateTime createdAt;
+        private Set<Role> roles = new HashSet<>();
+
+        private Builder() {
+        }
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder enabled(boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
+        public Builder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder roles(Set<Role> roles) {
+            this.roles = roles;
+            return this;
+        }
+
+        public AppUser build() {
+            return new AppUser(id, username, password, email, enabled, createdAt, roles);
+        }
     }
 }

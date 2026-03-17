@@ -1,15 +1,9 @@
 package com.operator.subscriber.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "roles")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Role {
 
     @Id
@@ -18,4 +12,28 @@ public class Role {
 
     @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
+
+    public Role() {
+    }
+
+    public Role(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
