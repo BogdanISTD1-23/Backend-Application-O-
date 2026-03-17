@@ -53,6 +53,12 @@ public class SubscriberController {
         return ResponseEntity.ok(subscriberService.update(id, request));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable long id) {
+        subscriberService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{id}/tariff/{tariffId}")
     public ResponseEntity<SubscriberResponse> changeTariff(@PathVariable long id, @PathVariable long tariffId) {
         return ResponseEntity.ok(subscriberService.changeTariff(id, tariffId));

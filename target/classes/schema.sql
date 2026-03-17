@@ -66,18 +66,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 INSERT INTO roles (name) VALUES ('ROLE_ADMIN'), ('ROLE_SUBSCRIBER')
 ON CONFLICT (name) DO NOTHING;
 
--- Admin user: username=admin, password=admin123 (BCrypt)
-INSERT INTO app_users (username, password, email)
-VALUES (
-    'admin',
-    '$2a$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.',
-    'admin@operator.kg'
-) ON CONFLICT (username) DO NOTHING;
-
-INSERT INTO user_roles (user_id, role_id)
-SELECT u.id, r.id FROM app_users u, roles r
-WHERE u.username = 'admin' AND r.name = 'ROLE_ADMIN'
-ON CONFLICT DO NOTHING;
+-- Admin user is created/updated on startup by the application (see DataInitializer).
 
 -- Tariff seed data
 INSERT INTO tariffs (name, description, price, speed_mbps) VALUES

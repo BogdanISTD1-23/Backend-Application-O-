@@ -188,6 +188,15 @@ public class SubscriberServiceImpl extends AbstractBaseService implements Subscr
         return photoStorageService.loadAsResource(s.getPhotoPath());
     }
 
+    @Override
+    @Transactional
+    public void delete(long id) {
+        if (!subscriberRepository.existsById(id)) {
+            throw new com.operator.subscriber.exception.NotFoundException("Subscriber not found: " + id);
+        }
+        subscriberRepository.deleteById(id);
+    }
+
     private static void requirePositiveAmount(BigDecimal amount) {
         if (amount == null || amount.signum() <= 0) {
             throw new BadRequestException("Amount must be positive");

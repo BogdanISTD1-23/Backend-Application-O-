@@ -28,5 +28,7 @@ public interface SubscriberService {
     SubscriberResponse uploadPhoto(long id, MultipartFile file);
 
     Resource getPhoto(long id);
+
+    void delete(long id);
 }
 

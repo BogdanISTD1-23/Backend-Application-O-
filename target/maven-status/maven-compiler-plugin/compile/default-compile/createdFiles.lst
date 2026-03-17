@@ -9,6 +9,7 @@ com\operator\subscriber\payload\request\RegisterRequest.class
 com\operator\subscriber\payload\response\SubscriberResponse$Builder.class
 com\operator\subscriber\payload\response\TariffResponse.class
 com\operator\subscriber\payload\response\TransactionResponse.class
+com\operator\subscriber\config\DataInitializer.class
 com\operator\subscriber\service\SubscriberService.class
 com\operator\subscriber\dao\NativeJdbcMsisdnLookupDao.class
 com\operator\subscriber\exception\ConflictException.class

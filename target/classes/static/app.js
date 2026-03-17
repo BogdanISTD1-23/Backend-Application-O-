@@ -1,4 +1,5 @@
-const API_BASE = '/api/v1/subscribers';
+const API_BASE = '/api/subscribers';
+const AUTH_BASE = '/api/auth';
 
 const form = document.getElementById('subscriber-form');
 const resetBtn = document.getElementById('reset-form');
@@ -7,6 +8,16 @@ const tbody = document.getElementById('subscriber-table-body');
 const formErrors = document.getElementById('form-errors');
 const formSuccess = document.getElementById('form-success');
 const tableMessage = document.getElementById('table-message');
+
+const tabLogin = document.getElementById('tab-login');
+const tabRegister = document.getElementById('tab-register');
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const authErrors = document.getElementById('auth-errors');
+const authSuccess = document.getElementById('auth-success');
+const tokenBox = document.getElementById('token-box');
+const tokenValue = document.getElementById('token-value');
+const logoutBtn = document.getElementById('logout-btn');
 
 function showElement(el, text, isHtml = false) {
     if (!el) return;
@@ -25,6 +36,75 @@ function hideElement(el) {
     el.classList.add('hidden');
 }
 
+function setToken(token) {
+    if (token) {
+        localStorage.setItem('jwt', token);
+    } else {
+        localStorage.removeItem('jwt');
+    }
+    renderAuthState();
+}
+
+function getToken() {
+    return localStorage.getItem('jwt');
+}
+
+function authHeaders() {
+    const token = getToken();
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+}
+
+function renderAuthState() {
+    const token = getToken();
+    if (token) {
+        if (tokenBox && tokenValue) {
+            tokenValue.textContent = token;
+            showElement(tokenBox);
+        }
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+    } else {
+        hideElement(tokenBox);
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+    }
+}
+
+function setAuthTab(tab) {
+    hideElement(authErrors);
+    hideElement(authSuccess);
+    if (tab === 'register') {
+        hideElement(loginForm);
+        showElement(registerForm);
+    } else {
+        hideElement(registerForm);
+        showElement(loginForm);
+    }
+}
+
+async function authRequest(path, payload) {
+    const res = await fetch(`${AUTH_BASE}${path}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    const body = await res.json().catch(() => null);
+    if (!res.ok) {
+        const message = body?.message || body?.error || `Ошибка: ${res.status}`;
+        const fields = body?.fieldErrors;
+        if (fields && typeof fields === 'object') {
+            const html = Object.entries(fields)
+                .map(([field, msg]) => `<div><strong>${field}</strong>: ${msg}</div>`)
+                .join('');
+            showElement(authErrors, html || message, true);
+        } else {
+            showElement(authErrors, message);
+        }
+        throw new Error(message);
+    }
+
+    return body;
+}
+
 async function fetchSubscribers() {
     tbody.innerHTML = `
       <tr>
@@ -34,8 +114,9 @@ async function fetchSubscribers() {
     hideElement(tableMessage);
 
     try {
-        const res = await fetch(API_BASE);
+        const res = await fetch(API_BASE, { headers: { ...authHeaders() } });
         if (!res.ok) {
+            if (res.status === 401) throw new Error('Нужно войти (JWT).');
             throw new Error('Ошибка при загрузке списка абонентов');
         }
         const data = await res.json();
@@ -64,13 +145,14 @@ function renderSubscribers(list) {
     tbody.innerHTML = '';
     list.forEach(sub => {
         const tr = document.createElement('tr');
+        const fullName = `${sub.lastName ?? ''} ${sub.firstName ?? ''}`.trim();
         tr.innerHTML = `
           <td>${sub.id ?? ''}</td>
           <td>${sub.msisdn}</td>
-          <td>${sub.fullName}</td>
+          <td>${fullName}</td>
           <td><span class="status-pill ${sub.status}">${sub.status}</span></td>
           <td>${Number(sub.balance).toFixed(2)}</td>
-          <td>${sub.createdAt ? sub.createdAt.replace('T', ' ').slice(0, 16) : ''}</td>
+          <td>${sub.tariffName ?? ''}</td>
           <td>
             <button class="danger" data-id="${sub.id}">Удалить</button>
           </td>
@@ -87,25 +169,28 @@ async function createSubscriber(payload) {
         const res = await fetch(API_BASE, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...authHeaders()
             },
             body: JSON.stringify(payload)
         });
 
         if (res.status === 400) {
             const body = await res.json().catch(() => ({}));
-            if (body && typeof body === 'object') {
-                const html = Object.entries(body)
+            const fields = body?.fieldErrors;
+            if (fields && typeof fields === 'object') {
+                const html = Object.entries(fields)
                     .map(([field, msg]) => `<div><strong>${field}</strong>: ${msg}</div>`)
                     .join('');
                 showElement(formErrors, html || 'Ошибка валидации', true);
             } else {
-                showElement(formErrors, 'Ошибка валидации');
+                showElement(formErrors, body?.message || 'Ошибка валидации');
             }
             return;
         }
 
         if (!res.ok) {
+            if (res.status === 401) throw new Error('Нужно войти (JWT).');
             throw new Error(`Ошибка сервера: ${res.status}`);
         }
 
@@ -124,7 +209,7 @@ async function deleteSubscriber(id) {
     if (!confirmDelete) return;
 
     try {
-        const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE', headers: { ...authHeaders() } });
         if (!res.ok && res.status !== 204) {
             throw new Error('Не удалось удалить абонента');
         }
@@ -139,7 +224,9 @@ form.addEventListener('submit', (e) => {
     const formData = new FormData(form);
     const payload = {
         msisdn: formData.get('msisdn')?.trim(),
-        fullName: formData.get('fullName')?.trim(),
+        firstName: formData.get('firstName')?.trim(),
+        lastName: formData.get('lastName')?.trim(),
+        email: (formData.get('email') || '').trim() || null,
         status: formData.get('status'),
         balance: parseFloat(formData.get('balance') || '0')
     };
@@ -165,6 +252,55 @@ tbody.addEventListener('click', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    renderAuthState();
+    setAuthTab('login');
     fetchSubscribers();
+});
+
+tabLogin?.addEventListener('click', () => setAuthTab('login'));
+tabRegister?.addEventListener('click', () => setAuthTab('register'));
+
+logoutBtn?.addEventListener('click', () => {
+    setToken(null);
+    showElement(authSuccess, 'Вы вышли из аккаунта');
+});
+
+loginForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideElement(authErrors);
+    hideElement(authSuccess);
+    const fd = new FormData(loginForm);
+    const payload = {
+        username: (fd.get('username') || '').trim(),
+        password: (fd.get('password') || '').trim()
+    };
+    try {
+        const body = await authRequest('/login', payload);
+        setToken(body.token);
+        showElement(authSuccess, `Вход успешен: ${body.username}`);
+        await fetchSubscribers();
+    } catch (err) {
+        // handled by authRequest
+    }
+});
+
+registerForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideElement(authErrors);
+    hideElement(authSuccess);
+    const fd = new FormData(registerForm);
+    const payload = {
+        username: (fd.get('username') || '').trim(),
+        email: (fd.get('email') || '').trim(),
+        password: (fd.get('password') || '').trim()
+    };
+    try {
+        const body = await authRequest('/register', payload);
+        setToken(body.token);
+        showElement(authSuccess, `Регистрация успешна: ${body.username}`);
+        await fetchSubscribers();
+    } catch (err) {
+        // handled by authRequest
+    }
 });
 

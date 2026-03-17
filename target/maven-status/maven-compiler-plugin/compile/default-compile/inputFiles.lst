@@ -11,6 +11,7 @@ C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\
 C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\repository\SubscriberRepository.java
 C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\security\JwtTokenProvider.java
 C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\payload\response\ApiErrorResponse.java
+C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\config\DataInitializer.java
 C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\entity\Transaction.java
 C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\payload\response\TransactionResponse.java
 C:\Users\User\Desktop\Backend Application\src\main\java\com\operator\subscriber\SubscriberServiceApplication.java

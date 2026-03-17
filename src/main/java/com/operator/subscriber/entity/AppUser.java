@@ -60,7 +60,7 @@ public class AppUser {
         this.email = email;
         this.enabled = enabled;
         this.createdAt = createdAt;
-        this.roles = roles == null ? new HashSet<>() : roles;
+        this.roles = roles == null ? new HashSet<>() : new HashSet<>(roles);
     }
 
     public Long getId() {
@@ -116,7 +116,7 @@ public class AppUser {
     }
 
     public void setRoles(Set<Role> roles) {
-        this.roles = roles == null ? new HashSet<>() : roles;
+        this.roles = roles == null ? new HashSet<>() : new HashSet<>(roles);
     }
 
     public static Builder builder() {
@@ -166,7 +166,7 @@ public class AppUser {
         }
 
         public Builder roles(Set<Role> roles) {
-            this.roles = roles;
+            this.roles = roles == null ? new HashSet<>() : new HashSet<>(roles);
             return this;
         }
 
